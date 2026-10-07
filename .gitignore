@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Entorno virtual
+.venv/
+venv/
+ENV/
+env/
+
+# Entornos de desarrollo / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Configuración local y secretos
+.env
+
+# Archivos temporales, de salida o logs locales
+output.txt
+*.log
+
+# Si prefieres no subir datasets pesados o carpetas de ETL locales (opcional pero recomendado)
+# Data/
+# ETL/__pycache__/
