@@ -8,6 +8,11 @@ from app.routes.ciudadanos import router as ciudadanos_router
 from app.routes.solicitudes import router as solicitudes_router
 from app.routes.interacciones import router as interacciones_router
 from app.routes.autenticacion import router as autenticacion_router
+from app.routes.fuentes import router as fuentes_router
+from app.routes.contenidos import router as contenidos_router
+from app.routes.panorama import router as panorama_router
+
+
 
 app = FastAPI(
     title="Nehnemi API",
@@ -15,6 +20,8 @@ app = FastAPI(
     description="API de Nehnemi para electromovilidad en la Ciudad de México",
 )
 
+app.include_router(fuentes_router, prefix="/api/v1")
+app.include_router(contenidos_router, prefix="/api/v1")
 
 app.include_router(
     zonas_router,
@@ -43,6 +50,11 @@ app.include_router(
 
 app.include_router(
     autenticacion_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    panorama_router,
     prefix="/api/v1",
 )
 
