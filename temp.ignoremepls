@@ -1,0 +1,8 @@
+3. Ruta
+Podríamos crear /estaciones-carga ahora mismo, pero para el frontend será muy útil poder consultar:
+/api/v1/zonas/{clave}/estaciones-carga
+
+Sin embargo, aquí quiero evitar desviarnos del OpenAPI congelado creando rutas porque nos resulten cómodas. Así que antes de agregar rutas nuevas, mantengamos el contrato como autoridad.
+Implementemos la consulta dentro del router de estaciones definido por el contrato y utilizaremos zona_clave como filtro cuando corresponda.
+
+
