@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import obtener_db
+from app.services.panorama_ampliado import obtener_panorama_ampliado
 
 
 router = APIRouter(
@@ -17,87 +18,84 @@ router = APIRouter(
 def obtener_panorama(
     db: Session = Depends(obtener_db),
 ):
-    estadisticas = db.execute(
+    """
+    Panorama general de electromovilidad en CDMX.
+
+    Incluye:
+    - Cobertura territorial
+    - Infraestructura de carga
+    - Distribución de indicadores
+    - Participación ciudadana
+    - Solicitudes de infraestructura
+    - Ventas de vehículos eléctricos
+    - Zonas prioritarias
+
+    Conserva compatibilidad con la respuesta anterior.
+    """
+
+    # --------------------------------------------------
+    # 1. PANORAMA AMPLIADO
+    # --------------------------------------------------
+
+    ampliacion = obtener_panorama_ampliado(db)
+
+    # --------------------------------------------------
+    # 2. INFORMACIÓN COMPLEMENTARIA
+    # --------------------------------------------------
+
+    fuentes_documentadas = db.execute(
         text("""
-            SELECT
-                (
-                    SELECT COUNT(*)
-                    FROM zonas
-                    WHERE tipo = 'ALCALDIA'
-                ) AS alcaldias,
-
-                (
-                    SELECT COUNT(*)
-                    FROM zonas
-                    WHERE tipo = 'AGEB'
-                ) AS agebs,
-
-                (
-                    SELECT COUNT(*)
-                    FROM estaciones_carga
-                ) AS estaciones_registradas,
-
-                (
-                    SELECT COALESCE(SUM(cantidad), 0)
-                    FROM conectores_carga
-                ) AS conectores_registrados,
-
-                (
-                    SELECT COUNT(*)
-                    FROM solicitudes_infraestructura
-                ) AS solicitudes_registradas,
-
-                (
-                    SELECT COUNT(*)
-                    FROM fuentes_datos
-                ) AS fuentes_documentadas
+            SELECT COUNT(*)
+            FROM fuentes_datos
         """)
-    ).mappings().one()
+    ).scalar_one()
+
+    # --------------------------------------------------
+    # 3. DISPONIBILIDAD DE DIMENSIONES
+    # --------------------------------------------------
+
+    distribuciones = ampliacion["distribuciones"]
+
+    dimensiones = {}
+
+    motivos_no_disponibilidad = {
+        "ADOPCION": "Sin datos territoriales suficientes",
+        "INFRAESTRUCTURA": "Sin evaluaciones territoriales disponibles",
+        "PARTICIPACION": "Sin evaluación territorial consolidada",
+        "ACCESIBILIDAD": "Sin evaluaciones territoriales disponibles",
+    }
+
+    for dimension, datos in distribuciones.items():
+        disponible = datos["disponibles"] > 0
+
+        dimensiones[dimension] = {
+            "disponible": disponible,
+        }
+
+        if not disponible:
+            dimensiones[dimension]["motivo"] = (
+                motivos_no_disponibilidad.get(
+                    dimension,
+                    "Sin datos suficientes",
+                )
+            )
+
+    # --------------------------------------------------
+    # 4. RESPUESTA FINAL
+    # --------------------------------------------------
 
     return {
         "fecha_actualizacion": datetime.now(
             timezone.utc
         ).isoformat(),
 
-        "cobertura_territorial": {
-            "alcaldias": estadisticas["alcaldias"],
-            "agebs": estadisticas["agebs"],
-        },
+        # Compatibilidad con el endpoint anterior.
+        "cobertura_territorial": ampliacion["territorio"],
 
-        "infraestructura": {
-            "estaciones_registradas": (
-                estadisticas["estaciones_registradas"]
-            ),
-            "conectores_registrados": (
-                estadisticas["conectores_registrados"]
-            ),
-            "estado_operativo_verificado": False,
-        },
+        "fuentes_documentadas": fuentes_documentadas,
 
-        "participacion": {
-            "solicitudes_registradas": (
-                estadisticas["solicitudes_registradas"]
-            ),
-        },
+        "dimensiones": dimensiones,
 
-        "fuentes_documentadas": (
-            estadisticas["fuentes_documentadas"]
-        ),
-
-        "dimensiones": {
-            "ADOPCION": {
-                "disponible": False,
-                "motivo": "Sin datos territoriales suficientes",
-            },
-            "INFRAESTRUCTURA": {
-                "disponible": True,
-            },
-            "PARTICIPACION": {
-                "disponible": False,
-                "motivo": "Sin evaluación territorial consolidada",
-            },
-            "ACCESIBILIDAD": {
-                "disponible": True,
-            },
-        },
+        # Nuevos bloques.
+        **ampliacion,
     }

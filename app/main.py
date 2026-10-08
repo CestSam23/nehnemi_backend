@@ -11,7 +11,7 @@ from app.routes.autenticacion import router as autenticacion_router
 from app.routes.fuentes import router as fuentes_router
 from app.routes.contenidos import router as contenidos_router
 from app.routes.panorama import router as panorama_router
-
+from app.routes.analisis_territorial import router as analisis_router
 
 
 app = FastAPI(
@@ -55,6 +55,11 @@ app.include_router(
 
 app.include_router(
     panorama_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    analisis_router,
     prefix="/api/v1",
 )
 

@@ -1,13 +1,12 @@
 import uuid
+from datetime import datetime, timezone
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Enum, ForeignKey, String, Text, DateTime
+from sqlalchemy import Enum, ForeignKey, Text, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
-
-from datetime import datetime
 
 
 class SolicitudInfraestructura(Base):
@@ -16,6 +15,7 @@ class SolicitudInfraestructura(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
+        default=uuid.uuid4,
     )
 
     perfil_ciudadano_id: Mapped[uuid.UUID] = mapped_column(
@@ -67,9 +67,20 @@ class SolicitudInfraestructura(Base):
             create_type=False,
         ),
         nullable=False,
+        default="REGISTRADA",
     )
 
     creado_en: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+    )
+
+    actualizado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
     )
