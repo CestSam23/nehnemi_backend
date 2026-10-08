@@ -1,3 +1,8 @@
+import os
+
+from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+
 from fastapi import FastAPI
 from sqlalchemy import text
 
@@ -14,10 +19,30 @@ from app.routes.panorama import router as panorama_router
 from app.routes.analisis_territorial import router as analisis_router
 
 
+
 app = FastAPI(
     title="Nehnemi API",
     version="1.0.0",
     description="API de Nehnemi para electromovilidad en la Ciudad de México",
+)
+
+load_dotenv()
+
+origenes_permitidos = [
+    origen.strip().rstrip("/")
+    for origen in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if origen.strip()
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origenes_permitidos,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 app.include_router(fuentes_router, prefix="/api/v1")
