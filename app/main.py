@@ -5,6 +5,8 @@ from app.database import engine
 from app.routes.zonas import router as zonas_router
 from app.routes.estaciones import router as estaciones_router
 from app.routes.ciudadanos import router as ciudadanos_router
+from app.routes.solicitudes import router as solicitudes_router
+from app.routes.interacciones import router as interacciones_router
 
 app = FastAPI(
     title="Nehnemi API",
@@ -28,6 +30,15 @@ app.include_router(
     prefix="/api/v1",
 )
 
+app.include_router(
+    solicitudes_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    interacciones_router,
+    prefix="/api/v1",
+)
 
 @app.get("/health", tags=["Sistema"])
 def health():

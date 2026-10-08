@@ -1,11 +1,13 @@
 import uuid
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Enum, ForeignKey, String, Text
+from sqlalchemy import Enum, ForeignKey, String, Text, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
+
+from datetime import datetime
 
 
 class SolicitudInfraestructura(Base):
@@ -64,5 +66,10 @@ class SolicitudInfraestructura(Base):
             name="estado_solicitud",
             create_type=False,
         ),
+        nullable=False,
+    )
+
+    creado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
         nullable=False,
     )

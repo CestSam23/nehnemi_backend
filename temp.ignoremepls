@@ -6,3 +6,17 @@ Sin embargo, aquí quiero evitar desviarnos del OpenAPI congelado creando rutas 
 Implementemos la consulta dentro del router de estaciones definido por el contrato y utilizaremos zona_clave como filtro cuando corresponda.
 
 
+
+curl -i \
+  -X POST \
+  'http://127.0.0.1:8000/api/v1/solicitudes-infraestructura' \
+  -H "Authorization: Bearer $TOKEN_CIUDADANO" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "ubicacion": {
+      "latitud": 19.444724645210414,
+      "longitud": -99.13288479451363
+    },
+    "motivo": "CONSIDERARIA_EV_CON_CARGA",
+    "comentario": "Solicitud de prueba del backend Nehnemi"
+  }'

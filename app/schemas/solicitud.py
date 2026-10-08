@@ -1,4 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal
+from uuid import UUID
+from app.schemas.ubicacion import Ubicacion
+from datetime import datetime
 
 
 class ConteoCategoria(BaseModel):
@@ -11,3 +15,37 @@ class SolicitudesZona(BaseModel):
     total: int
     por_estado: list[ConteoCategoria]
     por_motivo: list[ConteoCategoria]
+
+class SolicitudCrear(BaseModel):
+    ubicacion: Ubicacion
+
+    motivo: Literal[
+        "VIVO_CERCA",
+        "TRABAJO_CERCA",
+        "TRANSITO_FRECUENTE",
+        "TENGO_EV",
+        "CONSIDERARIA_EV_CON_CARGA",
+        "OTRO",
+    ]
+
+    comentario: str | None = Field(
+        default=None,
+        max_length=500,
+    )
+
+
+class SolicitudCreada(BaseModel):
+    id: UUID
+    zona_clave: str
+    motivo: str
+    estado: str
+
+
+class SolicitudCiudadano(BaseModel):
+    id: UUID
+    zona_clave: str
+    motivo: str
+    comentario: str | None
+    estado: str
+    creado_en: datetime
+    ubicacion: Ubicacion
