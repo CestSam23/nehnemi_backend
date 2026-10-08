@@ -1,4 +1,7 @@
 from pydantic import BaseModel
+from uuid import UUID
+
+
 
 
 class Ubicacion(BaseModel):
@@ -20,3 +23,21 @@ class EstacionCargaRespuesta(BaseModel):
     ubicacion: Ubicacion
     estado_demostracion: str | None
     conectores: list[ConectorCargaRespuesta]
+    id: UUID
+
+
+class ConectorDetalle(BaseModel):
+    tipo_conector: str | None
+    cantidad: int
+    potencia_kw: float | None
+    estado_operativo: str | None
+
+
+class EstacionDetalle(BaseModel):
+    id: UUID
+    nombre: str | None
+    direccion: str | None
+    latitud: float
+    longitud: float
+    zona_clave: str | None
+    conectores: list[ConectorDetalle]
