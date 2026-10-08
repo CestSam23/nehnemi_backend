@@ -49,3 +49,27 @@ class SolicitudCiudadano(BaseModel):
     estado: str
     creado_en: datetime
     ubicacion: Ubicacion
+
+class SolicitudAdministrativa(BaseModel):
+    id: UUID
+    zona_clave: str
+    motivo: str
+    comentario: str | None
+    estado: str
+    creado_en: datetime
+
+
+class ListadoSolicitudes(BaseModel):
+    total: int
+    pagina: int
+    limite: int
+    solicitudes: list[SolicitudAdministrativa]
+
+
+class SolicitudActualizarEstado(BaseModel):
+    estado: Literal[
+        "REGISTRADA",
+        "EN_REVISION",
+        "ATENDIDA",
+        "DESCARTADA",
+    ]

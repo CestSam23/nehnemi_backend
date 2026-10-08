@@ -7,6 +7,7 @@ from app.routes.estaciones import router as estaciones_router
 from app.routes.ciudadanos import router as ciudadanos_router
 from app.routes.solicitudes import router as solicitudes_router
 from app.routes.interacciones import router as interacciones_router
+from app.routes.autenticacion import router as autenticacion_router
 
 app = FastAPI(
     title="Nehnemi API",
@@ -37,6 +38,11 @@ app.include_router(
 
 app.include_router(
     interacciones_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    autenticacion_router,
     prefix="/api/v1",
 )
 
