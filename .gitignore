@@ -44,3 +44,5 @@ output.txt
 # Si prefieres no subir datasets pesados o carpetas de ETL locales (opcional pero recomendado)
 # Data/
 # ETL/__pycache__/
+cookies.txt
+
